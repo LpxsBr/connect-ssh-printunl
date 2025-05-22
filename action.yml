@@ -56,11 +56,13 @@ runs:
           pritunl-client list --json | jq 'sort_by(.name) | .[0] | { "Profile Name": .name, "Client Address": .client_address }'
 
     - name: Configure Perm
+      shell: bash
       run: |
         echo "${{ inputs.private_key }} > key.pem"
         chmod 600 key.pem
     
     - name: Start connection and run script
+      shell: bash
       run: |
         ssh -i key.pem -p ${{ inputs.port }} -o StrictHostKeyChecking=no ${{ inputs.username }}@${{ inputs.host }} << 'EOF'
         ${{ inputs.script }}
@@ -72,7 +74,9 @@ runs:
       run: |
         pritunl-client stop ${{ steps.pritunl-connection.outputs.client-id }}
 
-    - run: echo "this end :)"
+    - name: Final
+      shell: bash
+      run: echo "this end :)"
 
 
   
