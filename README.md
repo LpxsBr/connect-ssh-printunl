@@ -1,4 +1,4 @@
-# 👋 Welcome to SSH + Printunl connection action
+# 👋 Welcome to SSH + Printunl connection action - V1.1
 
 This action allow and turn more easy connect and run scripts in server using SSH and Printunl VPN
 
@@ -18,14 +18,18 @@ This action allow and turn more easy connect and run scripts in server using SSH
 
 ```yaml
 - name: Connect SSH with Pritunl
-  uses: anselmo-lopes/connect-ssh-printunl@v1
+  uses: LpxsBr/connect-ssh-printunl@v1.1
   with:
-    host        : ${{ secrets.HOST        }}
-    username    : ${{ secrets.USERNAME    }}
-    port        : ${{ secrets.PORT        }}
-    private_key : ${{ secrets.PRIVATE_KEY }}
-    script      : |
+    host                  : ${{ secrets.HOST                  }}
+    username              : ${{ secrets.USERNAME              }}
+    port                  : ${{ secrets.PORT                  }}
+    private_key           : ${{ secrets.PRIVATE_KEY           }}
+    printunl_profile_file : ${{ secrets.PRITUNL_PROFILE_FILE  }}
+    printunl_profile_pin  : ${{ secrets.PRITUNL_PROFILE_PIN   }}
+    script : |
         echo "Hello World!"
+        cd project
+        php artisan cache:clear
 
 ```
 
