@@ -6,6 +6,11 @@ inputs:
     description: 'server host'
     required: true
   
+  port: 
+    description: 'server port'
+    required: true
+    default: "22"
+  
   username: 
     description: 'server username'
     required: true
@@ -13,6 +18,14 @@ inputs:
   private_key: 
     description: 'access key (perm)'
     required: true
+    
+  printunl_profile_file: 
+    description: 'Base64 encoded printunl profile'
+    required: false
+  
+  printunl_profile_pin: 
+    description: 'Pin of printunl profile'
+    required: false
   
   script: 
     description: 'script that you want to works in the server (attention on use)'
@@ -21,19 +34,43 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Start connection to printunl
-      run: echo "starting connections"
+     
+    - name: Setup Pritunl Profile
+      id: pritunl-connection
+      uses: nathanielvarona/pritunl-client-github-action@v1
+      with:
+          profile-file: ${{ inputs.printunl_profile_file }}
+          start-connection: false
+
+    - name: Start VPN Connection Manually
+      shell: bash
+      run: |
+          pritunl-client start ${{ steps.pritunl-connection.outputs.client-id }} \
+          --password ${{ inputs.printunl_profile_pin || '' }}
+
+          sleep 15
+
+    - name: Display VPN Connection Status Manually
+      shell: bash
+      run: |
+          pritunl-client list --json | jq 'sort_by(.name) | .[0] | { "Profile Name": .name, "Client Address": .client_address }'
 
     - name: Configure Perm
       run: |
         echo "${{ inputs.private_key }} > key.pem"
         chmod 600 key.pem
     
-    - name: start connection and run script
+    - name: Start connection and run script
       run: |
-        ssh -i key.pem -o StrictHostKeyChecking=no ${{ inputs.username }}@${{ inputs.host }} << 'EOF'
+        ssh -i key.pem -p ${{ inputs.port }} -o StrictHostKeyChecking=no ${{ inputs.username }}@${{ inputs.host }} << 'EOF'
         ${{ inputs.script }}
         EOF
+
+    - name: Stop VPN Connection Manually
+      if: ${{ always() }}
+      shell: bash
+      run: |
+        pritunl-client stop ${{ steps.pritunl-connection.outputs.client-id }}
 
     - run: echo "this end :)"
 
