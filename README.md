@@ -26,3 +26,10 @@ This action allow and turn more easy connect and run scripts in server using SSH
         echo "Hello World!"
 
 ```
+
+
+## Internal Actions
+
+This actions internally use:
+
+ - [nathanielvarona/pritunl-client-github-action@v1](https://github.com/nathanielvarona/pritunl-client-github-action)
