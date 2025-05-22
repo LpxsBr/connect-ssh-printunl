@@ -1,0 +1,41 @@
+name: printunl_server_access
+description: "Tool to server connection with Printunl VPN"
+author: "Anselmo Lopes"
+inputs:
+  host: 
+    description: 'server host'
+    required: true
+  
+  username: 
+    description: 'server username'
+    required: true
+  
+  private_key: 
+    description: 'access key (perm)'
+    required: true
+  
+  script: 
+    description: 'script that you want to works in the server (attention on use)'
+    required: false
+
+runs:
+  using: "composite"
+  steps:
+    - name: Start connection to printunl
+      run: echo "starting connections"
+
+    - name: Configure Perm
+      run: |
+        echo "${{ inputs.private_key }} > key.pem"
+        chmod 600 key.pem
+    
+    - name: start connection and run script
+      run: |
+        ssh -i key.pem -o StrictHostKeyChecking=no ${{ inputs.username }}@${{ inputs.host }} << 'EOF'
+        ${{ inputs.script }}
+        EOF
+
+    - run: echo "this end :)"
+
+
+  
