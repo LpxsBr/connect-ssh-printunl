@@ -7,7 +7,7 @@ This action allow and turn more easy connect and run scripts in server using SSH
 | Name          | Required      | Description                                   | Has Default Value?    |
 |----------     |-------------  |--------------------------                     |--------               |
 | `host`        | ✅            | Nome do usuário                               | ❌                    |
-| `port`        | ✅            | port to server access                         | ✅ (22)               |
+| `port`        | ❌            | port to server access                         | ✅ (22)               |
 | `username`    | ✅            | login to server access                        | ❌                    |
 | `private_key` | ✅            | private key to server access                  | ❌                    |
 | `script`      | ❌            | script that you want to works on the server   | ❌                    |
