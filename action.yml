@@ -1,6 +1,7 @@
 name: printunl_server_access
 description: "Tool to server connection with Printunl VPN"
 author: "Anselmo Lopes"
+
 inputs:
   host: 
     description: 'server host'
@@ -34,33 +35,33 @@ inputs:
 runs:
   using: "composite"
   steps:
-     
+
     - name: Setup Pritunl Profile
       id: pritunl-connection
       uses: nathanielvarona/pritunl-client-github-action@v1
       with:
-          profile-file: ${{ inputs.printunl_profile_file }}
-          start-connection: false
+        profile-file: ${{ inputs.printunl_profile_file }}
+        start-connection: false
 
     - name: Start VPN Connection Manually
       shell: bash
       run: |
-          pritunl-client start ${{ steps.pritunl-connection.outputs.client-id }} \
-          --password ${{ inputs.printunl_profile_pin || '' }}
+        pritunl-client start ${{ steps.pritunl-connection.outputs.client-id }} \
+        --password ${{ inputs.printunl_profile_pin || '' }}
 
-          sleep 15
+        sleep 15
 
     - name: Display VPN Connection Status Manually
       shell: bash
       run: |
-          pritunl-client list --json | jq 'sort_by(.name) | .[0] | { "Profile Name": .name, "Client Address": .client_address }'
+        pritunl-client list --json | jq 'sort_by(.name) | .[0] | { "Profile Name": .name, "Client Address": .client_address }'
 
     - name: Configure Perm
       shell: bash
       run: |
-        echo "${{ inputs.private_key }} > key.pem"
+        echo "${{ inputs.private_key }}" > key.pem
         chmod 600 key.pem
-    
+
     - name: Start connection and run script
       shell: bash
       run: |
@@ -77,6 +78,3 @@ runs:
     - name: Final
       shell: bash
       run: echo "this end :)"
-
-
-  
